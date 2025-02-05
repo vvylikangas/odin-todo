@@ -7,6 +7,34 @@
     <title>To-Do Lists</title>
   </head>
   <body>
+    <div class="container">
+      <form action="submit">
+        <label for="project">Select existing project</label>
+        <select name="project" id="project">
+          <option value="general">general</option>
+          <option value="test">test</option>
+        </select>
+        <label for="newproject">or add new:</label>
+        <input type="text" name="newproject" id="newproject" />
+        <button type="button">Add</button>
+        <label for="title">Title</label>
+        <input type="text" name="title" id="title" />
+        <label for="desc">Description</label>
+        <input type="text" name="desc" id="desc" />
+        <label for="duedate">Due Date</label>
+        <input type="date" name="duedate" id="duedate" />
+        <fieldset>
+          <legend>Priority</legend>
+          <input type="radio" name="priority" id="low" value="low" checked />
+          <label for="low">Low</label>
+          <input type="radio" name="priority" id="med" value="med" />
+          <label for="med">Medium</label>
+          <input type="radio" name="priority" id="high" value="high" />
+          <label for="high">High</label>
+        </fieldset>
+      </form>
+      <div id="todos-container"></div>
+    </div>
     <script src="./index.js"></script>
   </body>
 </html>

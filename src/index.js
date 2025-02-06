@@ -61,20 +61,41 @@ const DisplayController = (function () {
     });
   };
 
-  return { renderTodos };
+  const renderByProject = (projectName) => {
+    const todoContainer = document.getElementById('todos-container');
+    todoContainer.innerHTML = '';
+
+    let filteredTodos = TodoModule.getTodos().filter(
+      (todo) => todo.project === projectName
+    );
+
+    filteredTodos.forEach((todo, index) => {
+      const todoDiv = document.createElement('div');
+      todoDiv.classList.add('todo-item');
+      todoDiv.innerHTML = `
+        <h3>${todo.title}</h3>
+        <p>Description: ${todo.description}</p>
+        <p>Due: ${todo.dueDate}</p>
+        <p>Priority: ${todo.priority}</p>
+        <p>Project: ${todo.project}</p>
+        <button class="delete-btn" data-index="${index}">Delete</button>
+      `;
+      todoContainer.appendChild(todoDiv);
+    });
+
+    document.querySelectorAll('.delete-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const index = e.target.dataset.index;
+        TodoModule.removeTodo(index);
+        renderByProject(projectName);
+      });
+    });
+  };
+
+  return { renderTodos, renderByProject };
 })();
 
 const AppController = (function () {
-  const saveProject = (projectName) => {
-    let projects = JSON.parse(localStorage.getItem('odinTodoProjects')) || [
-      'General',
-    ];
-    if (!projects.includes(projectName)) {
-      projects.push(projectName);
-      localStorage.setItem('odinTodoProjects', JSON.stringify(projects));
-    }
-  };
-
   const loadProjects = () => {
     const projectSelect = document.getElementById('project');
     projectSelect.innerHTML = '';
@@ -88,6 +109,8 @@ const AppController = (function () {
       option.value = project;
       option.textContent = project;
       projectSelect.appendChild(option);
+
+      addProjectButton(project);
     });
   };
 
@@ -101,9 +124,17 @@ const AppController = (function () {
         const projectSelect = document.getElementById('project');
         const newProjectInput = document.getElementById('newproject');
         const newProject = newProjectInput.value.trim();
+        const projects = JSON.parse(
+          localStorage.getItem('odinTodoProjects')
+        ) || ['General'];
 
-        if (newProject) {
-          saveProject(newProject);
+        if (newProject && !projects.includes(newProject)) {
+          // save project name
+          projects.push(newProject);
+          localStorage.setItem('odinTodoProjects', JSON.stringify(projects));
+
+          // add new project button
+          addProjectButton(newProject);
 
           // add new project as a dropdown option
           const option = document.createElement('option');
@@ -144,6 +175,33 @@ const AppController = (function () {
         DisplayController.renderTodos();
       }
     });
+
+    // handle filtering by project
+    document.getElementById('all').addEventListener('click', () => {
+      DisplayController.renderTodos();
+    });
+  };
+
+  const addProjectButton = (projectName) => {
+    const projectContainer = document.querySelector('.todo-projects');
+
+    if (
+      Array.from(projectContainer.children).some(
+        (btn) => btn.textContent === projectName
+      )
+    ) {
+      return;
+    }
+
+    const projectButton = document.createElement('button');
+    projectButton.textContent = projectName;
+    projectButton.dataset.project = projectName;
+
+    projectButton.addEventListener('click', () => {
+      DisplayController.renderByProject(projectName);
+    });
+
+    projectContainer.appendChild(projectButton);
   };
 
   const init = () => {

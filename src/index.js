@@ -205,8 +205,17 @@ const AppController = (function () {
       }
     });
 
-    // handle filtering by project
-    document.getElementById('all').addEventListener('click', () => {
+    // show all projects
+    const allProjectsButton = document.getElementById('all');
+
+    allProjectsButton.addEventListener('click', () => {
+      // Remove 'is-selected' and 'is-primary' from all project buttons
+      document.querySelectorAll('.project-btn').forEach((button) => {
+        button.classList.remove('is-selected', 'is-primary');
+      });
+
+      // Add the classes to the clicked button
+      allProjectsButton.classList.add('is-selected', 'is-primary');
       DisplayController.renderTodos();
     });
   };
@@ -224,10 +233,17 @@ const AppController = (function () {
 
     const projectButton = document.createElement('button');
     projectButton.textContent = projectName;
-    projectButton.classList.add('button');
+    projectButton.classList.add('button', 'project-btn');
     projectButton.dataset.project = projectName;
 
     projectButton.addEventListener('click', () => {
+      // Remove 'is-selected' and 'is-primary' from all project buttons
+      document.querySelectorAll('.project-btn').forEach((button) => {
+        button.classList.remove('is-selected', 'is-primary');
+      });
+
+      // Add the classes to the clicked button
+      projectButton.classList.add('is-selected', 'is-primary');
       DisplayController.renderByProject(projectName);
     });
 

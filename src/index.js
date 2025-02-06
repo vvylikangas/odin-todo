@@ -251,7 +251,7 @@ const AppController = (function () {
 
     const projectButton = document.createElement('button');
     projectButton.textContent = projectName;
-    projectButton.classList.add('button', 'project-btn');
+    projectButton.classList.add('button', 'project-btn', 'is-flex-grow-1');
     projectButton.dataset.project = projectName;
 
     projectButton.addEventListener('click', () => {

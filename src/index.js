@@ -73,14 +73,23 @@ const DisplayController = (function () {
 
     TodoModule.getTodos().forEach((todo, index) => {
       const todoDiv = document.createElement('div');
-      todoDiv.classList.add('todo-item');
+      todoDiv.classList.add('todo-item', 'card');
       todoDiv.innerHTML = `
-        <h3>${todo.title}</h3>
-        <p>Description: ${todo.description}</p>
-        <p>Due: ${todo.dueDate}</p>
-        <p>Priority: ${todo.priority}</p>
-        <p>Project: ${todo.project}</p>
-        <button class=" button is-danger is-outlined delete-btn" data-index="${index}">Delete</button>
+        <header class="card-header">
+          <p class="card-header-title">${todo.title}</p>
+          <p class="card-header-title">${todo.dueDate}</p>
+          <button class=" button is-danger is-outlined delete-btn" data-index="${index}">Delete</button>
+        </header>
+        <div class="card-content">
+          <div class="content">
+            <p>Description: ${todo.description}</p>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <p class="card-footer-item">Due: ${todo.dueDate}</p>
+          <p class="card-footer-item">Priority: ${todo.priority}</p>
+          <p class="card-footer-item">Project: ${todo.project}</p>
+        </footer>
       `;
       todoContainer.appendChild(todoDiv);
     });
@@ -104,14 +113,23 @@ const DisplayController = (function () {
 
     filteredTodos.forEach((todo, index) => {
       const todoDiv = document.createElement('div');
-      todoDiv.classList.add('todo-item');
+      todoDiv.classList.add('todo-item', 'card');
       todoDiv.innerHTML = `
-        <h3>${todo.title}</h3>
-        <p>Description: ${todo.description}</p>
-        <p>Due: ${todo.dueDate}</p>
-        <p>Priority: ${todo.priority}</p>
-        <p>Project: ${todo.project}</p>
-        <button class="button is-danger is-outlined delete-btn" data-index="${index}">Delete</button>
+        <header class="card-header">
+          <p class="card-header-title">${todo.title}</p>
+          <p class="card-header-title">${todo.dueDate}</p>
+          <button class=" button is-danger is-outlined delete-btn" data-index="${index}">Delete</button>
+        </header>
+        <div class="card-content">
+          <div class="content">
+            <p>Description: ${todo.description}</p>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <p class="card-footer-item">Due: ${todo.dueDate}</p>
+          <p class="card-footer-item">Priority: ${todo.priority}</p>
+          <p class="card-footer-item">Project: ${todo.project}</p>
+        </footer>
       `;
       todoContainer.appendChild(todoDiv);
     });

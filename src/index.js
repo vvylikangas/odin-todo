@@ -14,7 +14,7 @@ var defaultOptions = {
   disabledDates: [],
   disabledWeekDays: undefined,
   highlightedDates: [],
-  weekStart: 0,
+  weekStart: 1,
   dateFormat: 'dd.MM.yyyy',
   enableMonthSwitch: true,
   enableYearSwitch: true,
@@ -48,7 +48,7 @@ const TodoModule = (function () {
 
   const addTodo = (title, desc, dueDate, priority, project = 'general') => {
     const newTodo = new Todo(title, desc, dueDate, priority, project);
-    todos.push(newTodo);
+    todos.unshift(newTodo);
     saveTodos();
   };
 
@@ -78,7 +78,7 @@ const DisplayController = (function () {
         <header class="card-header">
           <p class="card-header-title">${todo.title}</p>
           <p class="card-header-title">${todo.dueDate}</p>
-          <button class=" button is-danger is-outlined delete-btn" data-index="${index}">Delete</button>
+          <button class=" button is-danger is-outlined delete-btn m-1" data-index="${index}">Delete</button>
         </header>
         <div class="card-content">
           <div class="content">

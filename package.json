@@ -12,7 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "date-fns": "^4.1.0"
+    "bulma": "^1.0.3",
+    "bulma-calendar": "^7.1.1"
   },
   "devDependencies": {
     "css-loader": "^7.1.2",

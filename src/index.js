@@ -1,4 +1,37 @@
-import { format } from 'date-fns';
+import 'bulma/css/bulma.min.css';
+import 'bulma-calendar/dist/css/bulma-calendar.min.css';
+import bulmaCalendar from 'bulma-calendar';
+
+var defaultOptions = {
+  color: 'primary',
+  isRange: false,
+  allowSameDayRange: true,
+  lang: 'en-US',
+  startDate: new Date(Date.now()),
+  endDate: undefined,
+  minDate: null,
+  maxDate: null,
+  disabledDates: [],
+  disabledWeekDays: undefined,
+  highlightedDates: [],
+  weekStart: 0,
+  dateFormat: 'dd.MM.yyyy',
+  enableMonthSwitch: true,
+  enableYearSwitch: true,
+  displayYearsCount: 50,
+};
+
+// Initialize all input of date type.
+const calendars = bulmaCalendar.attach('[type="date"]', defaultOptions);
+
+// To access to bulmaCalendar instance of an element
+const element = document.querySelector('#duedate');
+if (element) {
+  // bulmaCalendar instance is available as element.bulmaCalendar
+  element.bulmaCalendar.on('select', (datepicker) => {
+    console.log(datepicker.data.value());
+  });
+}
 
 const TodoModule = (function () {
   const todos = JSON.parse(localStorage.getItem('odinTodos')) || [];
@@ -47,7 +80,7 @@ const DisplayController = (function () {
         <p>Due: ${todo.dueDate}</p>
         <p>Priority: ${todo.priority}</p>
         <p>Project: ${todo.project}</p>
-        <button class="delete-btn" data-index="${index}">Delete</button>
+        <button class=" button is-danger is-outlined delete-btn" data-index="${index}">Delete</button>
       `;
       todoContainer.appendChild(todoDiv);
     });
@@ -78,7 +111,7 @@ const DisplayController = (function () {
         <p>Due: ${todo.dueDate}</p>
         <p>Priority: ${todo.priority}</p>
         <p>Project: ${todo.project}</p>
-        <button class="delete-btn" data-index="${index}">Delete</button>
+        <button class="button is-danger is-outlined delete-btn" data-index="${index}">Delete</button>
       `;
       todoContainer.appendChild(todoDiv);
     });
@@ -162,16 +195,12 @@ const AppController = (function () {
       ).value;
       const projectSelect = document.getElementById('project');
 
-      const dueDateFormatted = dueDateInput
-        ? format(new Date(dueDateInput), 'dd.MM.yyyy')
-        : null;
-
       // Determine which project to use
       const project = projectSelect.value;
 
       // title and due date must be provided
-      if (title && dueDateFormatted) {
-        TodoModule.addTodo(title, desc, dueDateFormatted, priority, project);
+      if (title && dueDateInput) {
+        TodoModule.addTodo(title, desc, dueDateInput, priority, project);
         DisplayController.renderTodos();
       }
     });
@@ -195,6 +224,7 @@ const AppController = (function () {
 
     const projectButton = document.createElement('button');
     projectButton.textContent = projectName;
+    projectButton.classList.add('button');
     projectButton.dataset.project = projectName;
 
     projectButton.addEventListener('click', () => {

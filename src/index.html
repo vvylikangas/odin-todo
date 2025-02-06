@@ -3,39 +3,89 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
     <title>To-Do Lists</title>
   </head>
   <body>
     <div class="container">
       <form action="submit">
-        <label for="project">Select existing project</label>
-        <select name="project" id="project">
-          <option value="general">general</option>
-          <option value="test">test</option>
-        </select>
-        <label for="newproject">or add new:</label>
-        <input type="text" name="newproject" id="newproject" />
-        <button id="new-project-btn">Add</button>
-        <label for="title">Title</label>
-        <input type="text" name="title" id="title" />
-        <label for="desc">Description</label>
-        <input type="text" name="desc" id="desc" />
-        <label for="duedate">Due Date</label>
-        <input type="date" name="duedate" id="duedate" />
-        <fieldset>
-          <legend>Priority</legend>
-          <input type="radio" name="priority" id="low" value="low" checked />
-          <label for="low">Low</label>
-          <input type="radio" name="priority" id="med" value="med" />
-          <label for="med">Medium</label>
-          <input type="radio" name="priority" id="high" value="high" />
-          <label for="high">High</label>
-        </fieldset>
-        <button id="add-todo-btn">Add To-Do</button>
+        <div class="field is-grouped">
+          <label class="label" for="project">Select existing project</label>
+          <div class="control">
+            <div class="select">
+              <select name="project" id="project">
+                <option value="general">general</option>
+                <option value="test">test</option>
+              </select>
+            </div>
+          </div>
+          <label class="label" for="newproject">or add new:</label>
+          <div class="control is-expanded">
+            <input
+              class="input"
+              type="text"
+              name="newproject"
+              id="newproject" />
+          </div>
+          <button class="button is-success is-outlined" id="new-project-btn">
+            Add
+          </button>
+        </div>
+        <div class="field is-grouped">
+          <label class="label" for="title">Title</label>
+          <div class="control">
+            <input class="input" type="text" name="title" id="title" />
+          </div>
+          <label class="label" for="desc">Description</label>
+          <div class="control">
+            <input class="input" type="text" name="desc" id="desc" />
+          </div>
+        </div>
+        <div class="field is-grouped">
+          <label class="label" for="duedate">Due Date</label>
+          <div class="control">
+            <input
+              class="input bulmaCalendar"
+              type="date"
+              name="duedate"
+              id="duedate" />
+          </div>
+          <div class="field is-horizontal">
+            <div class="field-label">
+              <label class="label">Priority</label>
+            </div>
+            <div class="field-body">
+              <div class="field">
+                <div class="control">
+                  <label class="radio" for="low">
+                    <input
+                      type="radio"
+                      name="priority"
+                      id="low"
+                      value="low"
+                      checked />
+                    Low
+                  </label>
+                  <label class="radio" for="med">
+                    <input type="radio" name="priority" id="med" value="med" />
+                    Medium
+                  </label>
+                  <label class="radio" for="high">
+                    <input
+                      type="radio"
+                      name="priority"
+                      id="high"
+                      value="high" />
+                    High
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="button" id="add-todo-btn">Add To-Do</button>
       </form>
       <div class="todo-projects">
-        <button id="all">All</button>
+        <button class="button" id="all">All</button>
       </div>
       <div id="todos-container"></div>
     </div>

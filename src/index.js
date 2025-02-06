@@ -65,6 +65,32 @@ const DisplayController = (function () {
 })();
 
 const AppController = (function () {
+  const saveProject = (projectName) => {
+    let projects = JSON.parse(localStorage.getItem('odinTodoProjects')) || [
+      'General',
+    ];
+    if (!projects.includes(projectName)) {
+      projects.push(projectName);
+      localStorage.setItem('odinTodoProjects', JSON.stringify(projects));
+    }
+  };
+
+  const loadProjects = () => {
+    const projectSelect = document.getElementById('project');
+    projectSelect.innerHTML = '';
+
+    const projects = JSON.parse(localStorage.getItem('odinTodoProjects')) || [
+      'General',
+    ];
+
+    projects.forEach((project) => {
+      const option = document.createElement('option');
+      option.value = project;
+      option.textContent = project;
+      projectSelect.appendChild(option);
+    });
+  };
+
   const setupEventListeners = () => {
     // handle adding new project type
     document
@@ -76,13 +102,10 @@ const AppController = (function () {
         const newProjectInput = document.getElementById('newproject');
         const newProject = newProjectInput.value.trim();
 
-        // add new project to dropdown if provided & doesn't exist
-        if (
-          newProject &&
-          !Array.from(projectSelect.options).some(
-            (option) => option.value === newProject
-          )
-        ) {
+        if (newProject) {
+          saveProject(newProject);
+
+          // add new project as a dropdown option
           const option = document.createElement('option');
           option.value = newProject;
           option.textContent = newProject;
@@ -107,34 +130,13 @@ const AppController = (function () {
         'input[name="priority"]:checked'
       ).value;
       const projectSelect = document.getElementById('project');
-      const newProjectInput = document.getElementById('newproject');
-      const newProject = newProjectInput.value.trim();
 
       const dueDateFormatted = dueDateInput
         ? format(new Date(dueDateInput), 'dd.MM.yyyy')
         : null;
 
       // Determine which project to use
-      const project = newProject ? newProject : projectSelect.value;
-
-      // add new project to dropdown if provided & doesn't exist
-      if (
-        newProject &&
-        !Array.from(projectSelect.options).some(
-          (option) => option.value === newProject
-        )
-      ) {
-        const option = document.createElement('option');
-        option.value = newProject;
-        option.textContent = newProject;
-        projectSelect.appendChild(option);
-
-        // select new project
-        projectSelect.value = newProject;
-
-        // empty input field
-        newProjectInput.value = '';
-      }
+      const project = projectSelect.value;
 
       // title and due date must be provided
       if (title && dueDateFormatted) {
@@ -145,6 +147,7 @@ const AppController = (function () {
   };
 
   const init = () => {
+    loadProjects();
     setupEventListeners();
     DisplayController.renderTodos();
   };

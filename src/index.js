@@ -1,4 +1,4 @@
-import { format } from 'https://cdn.skypack.dev/date-fns';
+import { format } from 'date-fns';
 
 const TodoModule = (function () {
   const todos = JSON.parse(localStorage.getItem('odinTodos')) || [];

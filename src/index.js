@@ -2,37 +2,6 @@ import 'bulma/css/bulma.min.css';
 import 'bulma-calendar/dist/css/bulma-calendar.min.css';
 import bulmaCalendar from 'bulma-calendar';
 
-var defaultOptions = {
-  color: 'primary',
-  isRange: false,
-  allowSameDayRange: true,
-  lang: 'en-US',
-  startDate: new Date(Date.now()),
-  endDate: undefined,
-  minDate: null,
-  maxDate: null,
-  disabledDates: [],
-  disabledWeekDays: undefined,
-  highlightedDates: [],
-  weekStart: 1,
-  dateFormat: 'dd.MM.yyyy',
-  enableMonthSwitch: true,
-  enableYearSwitch: true,
-  displayYearsCount: 50,
-};
-
-// Initialize all input of date type.
-const calendars = bulmaCalendar.attach('[type="date"]', defaultOptions);
-
-// To access to bulmaCalendar instance of an element
-const element = document.querySelector('#duedate');
-if (element) {
-  // bulmaCalendar instance is available as element.bulmaCalendar
-  element.bulmaCalendar.on('select', (datepicker) => {
-    console.log(datepicker.data.value());
-  });
-}
-
 const TodoModule = (function () {
   const todos = JSON.parse(localStorage.getItem('odinTodos')) || [];
 
@@ -201,25 +170,57 @@ const AppController = (function () {
         }
       });
 
-    // handle adding new todo
-    document.getElementById('add-todo-btn').addEventListener('click', (e) => {
-      e.preventDefault();
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal = document.querySelector('.modal');
+      const modalBackground = document.querySelector('.modal-background');
+      const modalClose = document.querySelector('.modal-close');
+      const modalTrigger = document.querySelector('.js-modal-trigger');
+      const addTodoBtn = document.getElementById('add-todo-btn');
 
-      const title = document.getElementById('title').value;
-      const desc = document.getElementById('desc').value;
-      const dueDateInput = document.getElementById('duedate').value;
-      const priority = document.querySelector(
-        'input[name="priority"]:checked'
-      ).value;
-      const projectSelect = document.getElementById('project');
+      function openModal() {
+        modal.classList.add('is-active');
+      }
 
-      // Determine which project to use
-      const project = projectSelect.value;
+      function closeModal() {
+        modal.classList.remove('is-active');
+      }
 
-      // title and due date must be provided
-      if (title && dueDateInput) {
-        TodoModule.addTodo(title, desc, dueDateInput, priority, project);
-        DisplayController.renderTodos();
+      // Open modal
+      if (modalTrigger) {
+        modalTrigger.addEventListener('click', openModal);
+      }
+
+      // Close modal when clicking close button or background
+      [modalClose, modalBackground].forEach((el) => {
+        if (el) el.addEventListener('click', closeModal);
+      });
+
+      // Close modal on Escape key
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeModal();
+        }
+      });
+
+      // Handle adding new todo & close modal
+      if (addTodoBtn) {
+        addTodoBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+
+          const title = document.getElementById('title').value.trim();
+          const desc = document.getElementById('desc').value.trim();
+          const dueDateInput = document.getElementById('duedate').value;
+          const priority = document.querySelector(
+            'input[name="priority"]:checked'
+          )?.value;
+          const project = document.getElementById('project')?.value;
+
+          if (title && dueDateInput) {
+            TodoModule.addTodo(title, desc, dueDateInput, priority, project);
+            DisplayController.renderTodos();
+            closeModal(); // Close modal after adding task
+          }
+        });
       }
     });
 
@@ -268,9 +269,53 @@ const AppController = (function () {
     projectContainer.appendChild(projectButton);
   };
 
+  const initCalendar = () => {
+    const defaultOptions = {
+      color: 'primary',
+      isRange: false,
+      allowSameDayRange: true,
+      lang: 'en-US',
+      startDate: new Date(Date.now()),
+      endDate: undefined,
+      minDate: null,
+      maxDate: null,
+      disabledDates: [],
+      disabledWeekDays: undefined,
+      highlightedDates: [],
+      weekStart: 1,
+      dateFormat: 'dd.MM.yyyy',
+      enableMonthSwitch: true,
+      enableYearSwitch: true,
+      displayYearsCount: 50,
+    };
+
+    // Initialize all input of date type.
+    const calendars = bulmaCalendar.attach('[type="date"]', defaultOptions);
+
+    // To access to bulmaCalendar instance of an element
+    const element = document.querySelector('#duedate');
+    if (element) {
+      // bulmaCalendar instance is available as element.bulmaCalendar
+      element.bulmaCalendar.on('select', (datepicker) => {
+        console.log(datepicker.data.value());
+      });
+
+      // 🔥 Force scroll to bottom when calendar opens
+      element.bulmaCalendar.on('show', () => {
+        const modalContent = document.querySelector('.modal-content'); // Make sure this is correct
+        if (modalContent) {
+          setTimeout(() => {
+            modalContent.scrollTop = modalContent.scrollHeight;
+          }, 50); // Small delay to ensure calendar is visible
+        }
+      });
+    }
+  };
+
   const init = () => {
     loadProjects();
     setupEventListeners();
+    initCalendar();
     DisplayController.renderTodos();
   };
 

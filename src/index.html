@@ -8,13 +8,40 @@
   <body>
     <div class="m-4">
       <div class="container is-max-tablet">
-        <div class="columns is-centered">
-          <div class="column is-fullwidth">
-            <div class="my-5">
+        <div id="modal-form" class="modal">
+          <div class="modal-background"></div>
+          <div class="modal-content">
+            <div class="box">
+              <!-- Your content -->
               <form action="submit">
                 <div class="field">
+                  <label class="label" for="newproject"
+                    >Add a new Project:</label
+                  >
+                  <div class="control">
+                    <input
+                      class="input is-fullwidth"
+                      type="text"
+                      name="newproject"
+                      id="newproject"
+                      placeholder="Enter Project name" />
+                  </div>
+                </div>
+                <div class="field is-grouped">
+                  <div class="control is-expanded">
+                    <button
+                      class="button is-success is-outlined"
+                      id="new-project-btn">
+                      Add Project
+                    </button>
+                  </div>
+                </div>
+                <div class="block"></div>
+                <p>OR</p>
+                <div class="block"></div>
+                <div class="field">
                   <label class="label" for="project"
-                    >Select existing project</label
+                    >Select an existing project</label
                   >
                   <div class="control">
                     <div class="select is-fullwidth">
@@ -25,31 +52,6 @@
                     </div>
                   </div>
                 </div>
-
-                <div class="field">
-                  <label class="label" for="newproject"
-                    >Or add new project:</label
-                  >
-                  <div class="control">
-                    <input
-                      class="input is-fullwidth"
-                      type="text"
-                      name="newproject"
-                      id="newproject"
-                      placeholder="Enter project name" />
-                  </div>
-                </div>
-
-                <div class="field is-grouped">
-                  <div class="control is-expanded">
-                    <button
-                      class="button is-success is-outlined"
-                      id="new-project-btn">
-                      Add Project
-                    </button>
-                  </div>
-                </div>
-
                 <div class="field">
                   <label class="label" for="title">Title</label>
                   <div class="control">
@@ -58,10 +60,9 @@
                       type="text"
                       name="title"
                       id="title"
-                      placeholder="Task title" />
+                      placeholder="Task Title" />
                   </div>
                 </div>
-
                 <div class="field">
                   <label class="label" for="desc">Description</label>
                   <div class="control">
@@ -70,10 +71,9 @@
                       type="text"
                       name="desc"
                       id="desc"
-                      placeholder="Task description" />
+                      placeholder="Task Description" />
                   </div>
                 </div>
-
                 <div class="field">
                   <label class="label" for="duedate">Due Date</label>
                   <div class="control">
@@ -117,7 +117,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div class="field is-grouped">
                   <div class="control">
                     <button
@@ -130,8 +129,13 @@
               </form>
             </div>
           </div>
+          <button class="modal-close is-large" aria-label="close"></button>
         </div>
-
+        <button
+          class="js-modal-trigger button is-success is-outlined"
+          data-target="modal-form">
+          Add a new Task
+        </button>
         <div
           class="todo-projects my-5 is-flex is-flex-wrap-wrap is-justify-content-center">
           <button

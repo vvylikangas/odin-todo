@@ -36,30 +36,53 @@ const TodoModule = (function () {
 })();
 
 const DisplayController = (function () {
+  const createTodoElement = (todo, index) => {
+    const todoDiv = document.createElement('div');
+    todoDiv.classList.add('todo-item', 'card');
+
+    let priorityClass = '';
+
+    // Check the priority and assign the appropriate class
+    switch (todo.priority) {
+      case 'Low':
+        priorityClass = 'has-text-success'; // Green for low priority
+        break;
+      case 'Medium':
+        priorityClass = 'has-text-warning'; // Yellow for medium priority
+        break;
+      case 'High':
+        priorityClass = 'has-text-danger'; // Red for high priority
+        break;
+      default:
+        priorityClass = ''; // No color if the priority is not set
+    }
+
+    todoDiv.innerHTML = `
+      <header class="card-header">
+        <p class="card-header-title">${todo.title}</p>
+        <p class="card-header-title">${todo.dueDate}</p>
+        <button class="button is-danger is-outlined delete-btn m-1" data-index="${index}">Delete</button>
+      </header>
+      <div class="card-content">
+        <div class="content">
+          <p>Description: ${todo.description}</p>
+        </div>
+      </div>
+      <footer class="card-footer">
+        <p class="card-footer-item is-flex is-flex-direction-column"><strong>Due:</strong><span>${todo.dueDate}</span></p>
+        <p class="card-footer-item is-flex is-flex-direction-column ${priorityClass}"><strong>Priority:</strong><span>${todo.priority}</span></p>
+        <p class="card-footer-item is-flex is-flex-direction-column"><strong>Project:</strong><span>${todo.project}</span></p>
+      </footer>
+    `;
+    return todoDiv;
+  };
+
   const renderTodos = () => {
     const todoContainer = document.getElementById('todos-container');
     todoContainer.innerHTML = '';
 
     TodoModule.getTodos().forEach((todo, index) => {
-      const todoDiv = document.createElement('div');
-      todoDiv.classList.add('todo-item', 'card');
-      todoDiv.innerHTML = `
-        <header class="card-header">
-          <p class="card-header-title">${todo.title}</p>
-          <p class="card-header-title">${todo.dueDate}</p>
-          <button class=" button is-danger is-outlined delete-btn m-1" data-index="${index}">Delete</button>
-        </header>
-        <div class="card-content">
-          <div class="content">
-            <p>Description: ${todo.description}</p>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <p class="card-footer-item">Due: ${todo.dueDate}</p>
-          <p class="card-footer-item">Priority: ${todo.priority}</p>
-          <p class="card-footer-item">Project: ${todo.project}</p>
-        </footer>
-      `;
+      const todoDiv = createTodoElement(todo, index);
       todoContainer.appendChild(todoDiv);
     });
 
@@ -80,26 +103,55 @@ const DisplayController = (function () {
       (todo) => todo.project === projectName
     );
 
+    if (projectName !== 'General') {
+      const deleteProjectButton = document.createElement('button');
+      deleteProjectButton.classList.add('button', 'is-danger', 'is-outlined');
+      deleteProjectButton.textContent = `Delete Project: ${projectName}`;
+      deleteProjectButton.addEventListener('click', () => {
+        // remove all tasks for hte project
+        TodoModule.getTodos().forEach((todo, index) => {
+          if (todo.project === projectName) {
+            TodoModule.removeTodo(index);
+          }
+        });
+
+        // remove from project list
+        const projects =
+          JSON.parse(localStorage.getItem('odinTodoProjects')) || 'General';
+        const updatedProjects = projects.filter(
+          (project) => project != projectName
+        );
+        localStorage.setItem(
+          'odinTodoProjects',
+          JSON.stringify(updatedProjects)
+        );
+
+        // Remove the project button from the Menu
+        const projectButtons = document.querySelectorAll('.project-btn');
+        projectButtons.forEach((button) => {
+          if (button.textContent === projectName) {
+            button.remove();
+          }
+        });
+
+        // Remove the project dropdown option
+        const projectSelect = document.getElementById('project');
+        const projectOption = projectSelect.querySelector(
+          `option[value="${projectName}"]`
+        );
+        if (projectOption) {
+          projectOption.remove();
+        }
+
+        // re-render
+        renderTodos();
+      });
+      // add delete project button
+      todoContainer.appendChild(deleteProjectButton);
+    }
+
     filteredTodos.forEach((todo, index) => {
-      const todoDiv = document.createElement('div');
-      todoDiv.classList.add('todo-item', 'card');
-      todoDiv.innerHTML = `
-        <header class="card-header">
-          <p class="card-header-title">${todo.title}</p>
-          <p class="card-header-title">${todo.dueDate}</p>
-          <button class=" button is-danger is-outlined delete-btn" data-index="${index}">Delete</button>
-        </header>
-        <div class="card-content">
-          <div class="content">
-            <p>Description: ${todo.description}</p>
-          </div>
-        </div>
-        <footer class="card-footer">
-          <p class="card-footer-item">Due: ${todo.dueDate}</p>
-          <p class="card-footer-item">Priority: ${todo.priority}</p>
-          <p class="card-footer-item">Project: ${todo.project}</p>
-        </footer>
-      `;
+      const todoDiv = createTodoElement(todo, index);
       todoContainer.appendChild(todoDiv);
     });
 
@@ -130,45 +182,58 @@ const AppController = (function () {
       option.textContent = project;
       projectSelect.appendChild(option);
 
-      addProjectButton(project);
+      insertNewProjectButton(project);
     });
   };
 
   const setupEventListeners = () => {
     // handle adding new project type
-    document
-      .getElementById('new-project-btn')
-      .addEventListener('click', (e) => {
-        e.preventDefault();
+    const addProjectButton = document.getElementById('new-project-btn');
+    const newProjectInput = document.getElementById('newproject');
 
-        const projectSelect = document.getElementById('project');
-        const newProjectInput = document.getElementById('newproject');
-        const newProject = newProjectInput.value.trim();
-        const projects = JSON.parse(
-          localStorage.getItem('odinTodoProjects')
-        ) || ['General'];
+    const toggleAddProjectButton = () => {
+      if (newProjectInput.value.trim() === '') {
+        addProjectButton.disabled = true;
+      } else {
+        addProjectButton.disabled = false;
+      }
+    };
 
-        if (newProject && !projects.includes(newProject)) {
-          // save project name
-          projects.push(newProject);
-          localStorage.setItem('odinTodoProjects', JSON.stringify(projects));
+    toggleAddProjectButton();
 
-          // add new project button
-          addProjectButton(newProject);
+    newProjectInput.addEventListener('input', toggleAddProjectButton);
 
-          // add new project as a dropdown option
-          const option = document.createElement('option');
-          option.value = newProject;
-          option.textContent = newProject;
-          projectSelect.appendChild(option);
+    addProjectButton.addEventListener('click', (e) => {
+      e.preventDefault();
 
-          // select new project
-          projectSelect.value = newProject;
+      const projectSelect = document.getElementById('project');
+      const newProject = newProjectInput.value.trim();
+      const projects = JSON.parse(localStorage.getItem('odinTodoProjects')) || [
+        'General',
+      ];
 
-          // empty input field
-          newProjectInput.value = '';
-        }
-      });
+      if (newProject && !projects.includes(newProject)) {
+        // save project name
+        projects.push(newProject);
+        localStorage.setItem('odinTodoProjects', JSON.stringify(projects));
+
+        // add new project button
+        insertNewProjectButton(newProject);
+
+        // add new project as a dropdown option
+        const option = document.createElement('option');
+        option.value = newProject;
+        option.textContent = newProject;
+        projectSelect.appendChild(option);
+
+        // select new project
+        projectSelect.value = newProject;
+
+        // empty input field
+        newProjectInput.value = '';
+        toggleAddProjectButton();
+      }
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
       const modal = document.querySelector('.modal');
@@ -219,6 +284,24 @@ const AppController = (function () {
             TodoModule.addTodo(title, desc, dueDateInput, priority, project);
             DisplayController.renderTodos();
             closeModal(); // Close modal after adding task
+
+            // Reset the form
+            const form = document.querySelector('#todo-form'); // Assuming your form has an id of 'todo-form'
+            form.reset(); // Resets all fields
+
+            // Set defaults
+            document.querySelector(
+              'input[name="priority"][value="Low"]'
+            ).checked = true;
+            document.getElementById('project').value = 'General';
+
+            const element = document.querySelector('#duedate');
+            if (element && element.bulmaCalendar) {
+              // Set today's date in the calendar
+              const today = new Date();
+              element.bulmaCalendar.value(today); // Set the date using the value method
+              element.bulmaCalendar.refresh();
+            }
           }
         });
       }
@@ -239,7 +322,7 @@ const AppController = (function () {
     });
   };
 
-  const addProjectButton = (projectName) => {
+  const insertNewProjectButton = (projectName) => {
     const projectContainer = document.querySelector('.todo-projects');
 
     if (
@@ -275,7 +358,7 @@ const AppController = (function () {
       isRange: false,
       allowSameDayRange: true,
       lang: 'en-US',
-      startDate: new Date(Date.now()),
+      startDate: new Date(),
       endDate: undefined,
       minDate: null,
       maxDate: null,

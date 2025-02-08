@@ -21,20 +21,18 @@ const CalendarController = (() => {
       displayYearsCount: 50,
     };
 
-    // Initialize all input of date type.
-    const calendars = bulmaCalendar.attach('[type="date"]', defaultOptions);
+    bulmaCalendar.attach('[type="date"]', defaultOptions);
 
     // To access to bulmaCalendar instance of an element
     const element = document.querySelector('#duedate');
     if (element) {
-      // bulmaCalendar instance is available as element.bulmaCalendar
       element.bulmaCalendar.on('select', (datepicker) => {
         console.log(datepicker.data.value());
       });
 
-      // 🔥 Force scroll to bottom when calendar opens
+      // Force scroll to bottom when calendar opens
       element.bulmaCalendar.on('show', () => {
-        const modalContent = document.querySelector('.modal-content'); // Make sure this is correct
+        const modalContent = document.querySelector('.modal-content');
         if (modalContent) {
           setTimeout(() => {
             modalContent.scrollTop = modalContent.scrollHeight;

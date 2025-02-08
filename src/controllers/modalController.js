@@ -1,5 +1,5 @@
-import TodoModule from '../models/todoModel'; // Ensure this is the correct path
-import DisplayController from './displayController'; // Ensure this is the correct path
+import TodoModule from '../models/todoModel';
+import DisplayController from './displayController';
 
 const ModalController = (function () {
   const modal = document.querySelector('.modal');

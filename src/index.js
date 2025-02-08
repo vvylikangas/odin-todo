@@ -250,6 +250,35 @@ const AppController = (function () {
       const modalClose = document.querySelector('.modal-close');
       const modalTrigger = document.querySelector('.js-modal-trigger');
       const addTodoBtn = document.getElementById('add-todo-btn');
+      const taskTitleInput = document.getElementById('title');
+      const dueDateInput = document.getElementById('duedate');
+      const calendar = dueDateInput.bulmaCalendar;
+
+      const toggleAddTodoButton = () => {
+        if (taskTitleInput.value.trim() === '' || dueDateInput.value === '') {
+          addTodoBtn.disabled = true;
+        } else {
+          addTodoBtn.disabled = false;
+        }
+      };
+
+      toggleAddTodoButton();
+
+      taskTitleInput.addEventListener('input', toggleAddTodoButton);
+      dueDateInput.addEventListener('input', toggleAddTodoButton);
+
+      // Ensure Bulma Calendar updates the input field and triggers an event
+      if (calendar) {
+        calendar.on('select', () => {
+          dueDateInput.value = calendar.value(); // Ensure input is updated
+          dueDateInput.dispatchEvent(new Event('input')); // Manually trigger input event
+        });
+
+        calendar.on('clear', () => {
+          dueDateInput.value = ''; // Clear input field
+          dueDateInput.dispatchEvent(new Event('input')); // Manually trigger input event
+        });
+      }
 
       function openModal() {
         modal.classList.add('is-active');

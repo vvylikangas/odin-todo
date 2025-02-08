@@ -38,7 +38,7 @@ const TodoModule = (function () {
 const DisplayController = (function () {
   const createTodoElement = (todo, index) => {
     const todoDiv = document.createElement('div');
-    todoDiv.classList.add('todo-item', 'card');
+    todoDiv.classList.add('todo-item', 'card', 'mb-1');
 
     let priorityClass = '';
 
@@ -79,7 +79,9 @@ const DisplayController = (function () {
 
   const renderTodos = () => {
     const todoContainer = document.getElementById('todos-container');
+    const deleteProjectDiv = document.getElementById('delete-project');
     todoContainer.innerHTML = '';
+    deleteProjectDiv.innerHTML = '';
 
     TodoModule.getTodos().forEach((todo, index) => {
       const todoDiv = createTodoElement(todo, index);
@@ -97,7 +99,9 @@ const DisplayController = (function () {
 
   const renderByProject = (projectName) => {
     const todoContainer = document.getElementById('todos-container');
+    const deleteProjectDiv = document.getElementById('delete-project');
     todoContainer.innerHTML = '';
+    deleteProjectDiv.innerHTML = '';
 
     let filteredTodos = TodoModule.getTodos().filter(
       (todo) => todo.project === projectName
@@ -105,7 +109,12 @@ const DisplayController = (function () {
 
     if (projectName !== 'General') {
       const deleteProjectButton = document.createElement('button');
-      deleteProjectButton.classList.add('button', 'is-danger', 'is-outlined');
+      deleteProjectButton.classList.add(
+        'button',
+        'is-danger',
+        'is-outlined',
+        'mb-3'
+      );
       deleteProjectButton.textContent = `Delete Project: ${projectName}`;
       deleteProjectButton.addEventListener('click', () => {
         // remove all tasks for hte project
@@ -147,7 +156,7 @@ const DisplayController = (function () {
         renderTodos();
       });
       // add delete project button
-      todoContainer.appendChild(deleteProjectButton);
+      deleteProjectDiv.appendChild(deleteProjectButton);
     }
 
     filteredTodos.forEach((todo, index) => {

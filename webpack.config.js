@@ -14,12 +14,12 @@ module.exports = {
     static: {
       directory: path.join(__dirname, 'dist'),
     },
-    watchFiles: ['./src/index.html'],
+    watchFiles: ['./src/views/index.html'],
     open: true,
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/index.html',
+      template: './src/views/index.html',
     }),
   ],
   module: {

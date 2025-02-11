@@ -7,11 +7,11 @@ const TodoModule = (function () {
       this.description = description;
       this.dueDate = dueDate;
       this.priority = priority;
-      this.project = project || general;
+      this.project = project || 'General';
     }
   }
 
-  const addTodo = (title, desc, dueDate, priority, project = 'general') => {
+  const addTodo = (title, desc, dueDate, priority, project = 'General') => {
     const newTodo = new Todo(title, desc, dueDate, priority, project);
     todos.unshift(newTodo);
     saveTodos();
